@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- design tokens (CSS variables) ---------- */
+:root {
+  --grid-line: rgba(92, 111, 102, 0.10);
+  --grid-size: 32px;
+
+  --bm-ink:        #0D1614;
+  --bm-mist:       #F4F7F1;
+  --bm-surface:    #FFFFFF;
+  --bm-line:       rgba(13, 22, 20, 0.08);
+  --bm-line-dark:  rgba(255, 255, 255, 0.08);
+  --bm-lime:       #B5F23A;
+  --bm-lime-soft:  #D4F77C;
+  --bm-magenta:    #FF3D8A;
+  --bm-slate:      #5C6F66;
+  --bm-coral:      #FF7A59;
+}
+
+.dark {
+  --grid-line: rgba(181, 242, 58, 0.06);
+}
+
+/* Subtle scrollbars. */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(13, 22, 20, 0.10); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(181, 242, 58, 0.45); }
+.dark ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); }
+.dark ::-webkit-scrollbar-thumb:hover { background: rgba(181, 242, 58, 0.25); }
+
+/* ---------- decorative grid background ---------- */
+@keyframes blueprint-grid-drift {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: var(--grid-size) var(--grid-size),
+                              var(--grid-size) var(--grid-size); }
+}
+
+.hero-grid-bg {
+  background-color: var(--bm-mist);
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  animation: blueprint-grid-drift 48s linear infinite;
+}
+
+.dark .hero-grid-bg {
+  background-color: var(--bm-ink);
+}
+
+/* ---------- shared component classes ---------- */
+@layer components {
+  /* Card — clean white surface, subtle border + shadow. */
+  .gm-card {
+    @apply rounded-card border border-bm-line/60 bg-bm-surface p-5 shadow-card
+           dark:border-white/10 dark:bg-bm-graphite dark:shadow-none;
+  }
+
+  /* Lime "accent" card (used for primary KPI). */
+  .gm-card-accent {
+    @apply rounded-card border border-bm-lime/40 bg-bm-lime/15 p-5 shadow-card
+           dark:bg-bm-lime/10;
+  }
+
+  /* Section heading — small uppercase label above content. */
+  .gm-eyebrow {
+    @apply font-sans text-[11px] font-semibold uppercase tracking-[0.14em]
+           text-bm-slate dark:text-blueprint-mist/55;
+  }
+
+  /* Status chip (used for statuses + roadmap phases). */
+  .gm-chip {
+    @apply inline-flex items-center gap-1.5 rounded-chip px-2.5 py-0.5
+           text-[11px] font-semibold tracking-wide;
+  }
+
+  /* Chip variants. */
+  .gm-chip-ok      { @apply bg-bm-ok/15 text-bm-ok ring-1 ring-bm-ok/30; }
+  .gm-chip-warn    { @apply bg-bm-warn/15 text-bm-warn ring-1 ring-bm-warn/30; }
+  .gm-chip-danger  { @apply bg-bm-danger/15 text-bm-danger ring-1 ring-bm-danger/30; }
+  .gm-chip-lime    { @apply bg-bm-lime/15 text-bm-ink ring-1 ring-bm-lime/40
+                            dark:text-bm-lime; }
+  .gm-chip-magenta { @apply bg-bm-magenta/12 text-bm-magenta ring-1 ring-bm-magenta/30; }
+  .gm-chip-slate   { @apply bg-bm-slate/15 text-bm-slate ring-1 ring-bm-slate/25; }
+
+  /* Lime focus ring. */
+  .gm-focus {
+    @apply focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-bm-lime/70 focus-visible:ring-offset-2
+           focus-visible:ring-offset-bm-mist dark:focus-visible:ring-offset-bm-ink;
+  }
+
+  /* Big stat number (used in KPI cards). */
+  .gm-stat-num {
+    @apply font-sans text-[2rem] font-bold leading-none tracking-tight
+           text-blueprint-navy tabular-nums dark:text-blueprint-mist;
+  }
+  .gm-stat-suffix {
+    @apply font-sans text-base font-medium text-bm-slate dark:text-blueprint-mist/45;
+  }
+
+  /* Primary lime button. */
+  .gm-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-chip
+           bg-bm-lime px-4 py-2 font-sans text-sm font-semibold text-bm-ink
+           transition-transform hover:scale-[1.02] hover:bg-bm-lime-soft
+           gm-focus;
+  }
+
+  /* Ghost button. */
+  .gm-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-chip
+           border border-bm-line/60 bg-transparent px-4 py-2
+           font-sans text-sm font-medium text-blueprint-navy
+           transition-colors hover:bg-bm-mist
+           dark:border-white/10 dark:text-blueprint-mist dark:hover:bg-white/5
+           gm-focus;
+  }
+}

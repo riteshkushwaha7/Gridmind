@@ -1,0 +1,225 @@
+version: "3.9"
+
+name: gridmind
+
+networks:
+  gridmind-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  influxdb_data:
+  mlflow_artifacts:
+  redis_data:
+  data_nodes_db:
+
+x-healthcheck-defaults: &healthcheck-defaults
+  interval: 30s
+  timeout: 5s
+  retries: 10
+  start_period: 30s
+
+x-restart: &restart-policy
+  restart: unless-stopped
+
+services:
+  # ─────────────── Infrastructure ───────────────
+  redis:
+    <<: *restart-policy
+    image: redis/redis-stack:7.2.0-v10
+    container_name: gridmind-redis
+    command: ["redis-stack-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+      - "8379:8001"   # RedisInsight UI
+    volumes:
+      - redis_data:/data
+    networks: [gridmind-net]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      <<: *healthcheck-defaults
+
+  postgresql:
+    <<: *restart-policy
+    image: postgres:16-alpine
+    container_name: gridmind-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-gridmind}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gridmind}
+      POSTGRES_DB: ${POSTGRES_DB:-gridmind}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [gridmind-net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-gridmind} -d ${POSTGRES_DB:-gridmind}"]
+      <<: *healthcheck-defaults
+
+  influxdb:
+    <<: *restart-policy
+    image: influxdb:2.7-alpine
+    container_name: gridmind-influxdb
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUXDB_USER:-gridmind}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUXDB_PASSWORD:-gridmind-admin}
+      DOCKER_INFLUXDB_INIT_ORG: ${INFLUXDB_ORG:-gridmind}
+      DOCKER_INFLUXDB_INIT_BUCKET: ${INFLUXDB_BUCKET:-gridmind}
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUXDB_TOKEN}
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb_data:/var/lib/influxdb2
+    networks: [gridmind-net]
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      <<: *healthcheck-defaults
+
+  mlflow:
+    <<: *restart-policy
+    image: ghcr.io/mlflow/mlflow:v2.16.2
+    container_name: gridmind-mlflow
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri postgresql://${POSTGRES_USER:-gridmind}:${POSTGRES_PASSWORD:-gridmind}@postgresql:5432/${POSTGRES_DB:-gridmind}
+      --default-artifact-root /mlflow/artifacts
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_artifacts:/mlflow/artifacts
+    networks: [gridmind-net]
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:5000/ || exit 1"]
+      <<: *healthcheck-defaults
+
+  # ─────────────── Data Nodes (single FastAPI app, 6 routers) ───────────────
+  data-nodes:
+    <<: *restart-policy
+    build: ./data-nodes
+    container_name: gridmind-data-nodes
+    env_file: .env
+    ports: ["8001:8001"]
+    volumes:
+      - data_nodes_db:/data
+    networks: [gridmind-net]
+    depends_on:
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8001/health || exit 1"]
+      <<: *healthcheck-defaults
+
+  # ─────────────── ML Backends ───────────────
+  # Each ML backend is built from the shared backend/ context so it can COPY
+  # config.py + shared/ alongside its own service folder.
+  backend-lstm:
+    <<: *restart-policy
+    build:
+      context: ./backend
+      dockerfile: lstm/Dockerfile
+    container_name: gridmind-backend-lstm
+    env_file: .env
+    ports: ["8010:8010"]
+    networks: [gridmind-net]
+    depends_on:
+      redis:      { condition: service_healthy }
+      postgresql: { condition: service_healthy }
+      influxdb:   { condition: service_healthy }
+      mlflow:     { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8010/health || exit 1"]
+      <<: *healthcheck-defaults
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+        reservations:
+          memory: 1g
+
+  backend-ppo:
+    <<: *restart-policy
+    build:
+      context: ./backend
+      dockerfile: ppo/Dockerfile
+    container_name: gridmind-backend-ppo
+    env_file: .env
+    ports: ["8011:8011"]
+    networks: [gridmind-net]
+    depends_on:
+      redis:      { condition: service_healthy }
+      postgresql: { condition: service_healthy }
+      influxdb:   { condition: service_healthy }
+      mlflow:     { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8011/health || exit 1"]
+      <<: *healthcheck-defaults
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+        reservations:
+          memory: 1g
+
+  backend-clustering:
+    <<: *restart-policy
+    build:
+      context: ./backend
+      dockerfile: clustering/Dockerfile
+    container_name: gridmind-backend-clustering
+    env_file: .env
+    ports: ["8012:8012"]
+    networks: [gridmind-net]
+    depends_on:
+      redis:      { condition: service_healthy }
+      postgresql: { condition: service_healthy }
+      influxdb:   { condition: service_healthy }
+      mlflow:     { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8012/health || exit 1"]
+      <<: *healthcheck-defaults
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+
+  backend-gateway:
+    <<: *restart-policy
+    build:
+      context: ./backend
+      dockerfile: gateway/Dockerfile
+    container_name: gridmind-backend-gateway
+    env_file: .env
+    ports: ["8000:8000"]
+    networks: [gridmind-net]
+    depends_on:
+      backend-lstm:       { condition: service_healthy }
+      backend-ppo:        { condition: service_healthy }
+      backend-clustering: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:8000/health || exit 1"]
+      <<: *healthcheck-defaults
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+
+  # ─────────────── Frontend ───────────────
+  frontend:
+    <<: *restart-policy
+    build: ./frontend
+    container_name: gridmind-frontend
+    env_file: .env
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend-gateway:8000
+    ports: ["3000:3000"]
+    networks: [gridmind-net]
+    depends_on:
+      backend-gateway: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:3000/ || exit 1"]
+      <<: *healthcheck-defaults
