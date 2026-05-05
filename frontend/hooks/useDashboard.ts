@@ -3,9 +3,10 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getAlerts, getDashboardOverview, getZoneDetail } from "@/lib/api";
+import type { Alert, DashboardOverview, ZoneDetail } from "@/lib/types";
 
 export function useDashboardOverview() {
-  return useQuery({
+  return useQuery<DashboardOverview>({
     queryKey: ["dashboard", "overview"],
     queryFn: getDashboardOverview,
     staleTime: 15_000,
@@ -14,7 +15,7 @@ export function useDashboardOverview() {
 }
 
 export function useZoneDetail(zoneId: string | null | undefined) {
-  return useQuery({
+  return useQuery<ZoneDetail>({
     queryKey: ["dashboard", "zone", zoneId],
     queryFn: () => getZoneDetail(zoneId as string),
     enabled: Boolean(zoneId),
@@ -23,7 +24,7 @@ export function useZoneDetail(zoneId: string | null | undefined) {
 }
 
 export function useAlerts() {
-  return useQuery({
+  return useQuery<Alert[]>({
     queryKey: ["dashboard", "alerts"],
     queryFn: getAlerts,
     staleTime: 5_000,
