@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${jakarta.variable} ${jetbrains.variable} min-h-screen bg-bm-mist pb-20 font-sans text-blueprint-navy antialiased dark:bg-bm-ink dark:text-blueprint-mist md:pb-0`}
+        className={`${jakarta.variable} ${jetbrains.variable} min-h-screen bg-bm-mist pb-20 font-sans text-blueprint-navy antialiased md:pb-0`}
       >
         <Providers>
           {children}

@@ -1,12 +1,10 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Bell, Moon, Sun } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useDashboardOverview } from "@/hooks/useDashboard";
 import { routeTitles } from "@/lib/routeTitles";
-import { cn } from "@/lib/cn";
 import { StatusChip, systemStatusTone } from "@/components/ui/StatusChip";
 
 function formatClock(d: Date) {
@@ -28,7 +26,6 @@ function formatDate(d: Date) {
 export function TopBar() {
   const pathname = usePathname();
   const title = routeTitles[pathname] ?? "GRIDMIND";
-  const { resolvedTheme, setTheme } = useTheme();
   const [now, setNow] = useState<Date | null>(null);
   const [mounted, setMounted] = useState(false);
   const { data: overview } = useDashboardOverview();
@@ -45,14 +42,14 @@ export function TopBar() {
   const alertCount = overview?.alerts.length ?? 0;
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-bm-line/60 bg-bm-mist/85 px-5 backdrop-blur-md dark:border-white/10 dark:bg-bm-ink/85 md:px-8">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b border-bm-line/40 bg-white/90 px-5 backdrop-blur-md md:px-8">
       {/* Title + clock */}
       <div className="min-w-0">
-        <h1 className="truncate font-sans text-base font-bold tracking-tight text-blueprint-navy dark:text-blueprint-mist md:text-lg">
+        <h1 className="truncate font-sans text-base font-bold tracking-tight text-blueprint-navy md:text-lg">
           {title}
         </h1>
         <p
-          className="hidden font-sans text-[11px] text-bm-slate dark:text-blueprint-mist/55 sm:block"
+          className="hidden font-sans text-[11px] text-bm-slate sm:block"
           suppressHydrationWarning
         >
           {mounted && now
@@ -69,12 +66,12 @@ export function TopBar() {
 
         {/* Tariff readout */}
         {tariff ? (
-          <span className="hidden items-center gap-2 rounded-card border border-bm-line/60 bg-bm-surface px-3 py-1.5 font-sans text-xs dark:border-white/10 dark:bg-white/5 sm:inline-flex">
-            <span className="font-semibold text-blueprint-navy dark:text-blueprint-mist">
+          <span className="hidden items-center gap-2 rounded-card border border-bm-line/40 bg-white px-3 py-1.5 font-sans text-xs text-blueprint-navy sm:inline-flex">
+            <span className="font-semibold text-blueprint-navy">
               ₹{tariff.rate_inr.toFixed(2)}
             </span>
-            <span className="text-bm-slate dark:text-blueprint-mist/55">
-              /kWh · {tariff.tier.replace("_", " ").toLowerCase()}
+            <span className="text-bm-slate">
+              /kWh · {tariff.tier.replace("_", " ").toLowerCase()} · Bangalore
             </span>
           </span>
         ) : null}
@@ -82,7 +79,7 @@ export function TopBar() {
         {/* Alerts bell */}
         <button
           type="button"
-          className="gm-focus relative inline-flex h-9 w-9 items-center justify-center rounded-card border border-bm-line/60 bg-bm-surface text-blueprint-navy transition-colors hover:bg-bm-mist dark:border-white/10 dark:bg-white/5 dark:text-blueprint-mist dark:hover:bg-white/10"
+          className="gm-focus relative inline-flex h-9 w-9 items-center justify-center rounded-card border border-bm-line/40 bg-white text-blueprint-navy transition-colors hover:bg-bm-mist"
           aria-label={`${alertCount} alerts`}
         >
           <Bell className="h-4 w-4" />
@@ -93,24 +90,9 @@ export function TopBar() {
           ) : null}
         </button>
 
-        {/* Theme toggle */}
-        <button
-          type="button"
-          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-          className={cn(
-            "gm-focus inline-flex h-9 w-9 items-center justify-center rounded-card border border-bm-line/60 bg-bm-surface text-blueprint-navy transition-colors hover:bg-bm-mist",
-            "dark:border-white/10 dark:bg-white/5 dark:text-blueprint-mist dark:hover:bg-white/10",
-          )}
-          aria-label="Toggle colour theme"
-        >
-          {!mounted ? (
-            <span className="block h-4 w-4 rounded-sm bg-current opacity-20" />
-          ) : resolvedTheme === "dark" ? (
-            <Sun className="h-4 w-4" />
-          ) : (
-            <Moon className="h-4 w-4" />
-          )}
-        </button>
+        <span className="hidden text-[11px] uppercase tracking-[0.18em] text-bm-slate md:inline">
+          Mock data · Bengaluru city limits
+        </span>
       </div>
     </header>
   );

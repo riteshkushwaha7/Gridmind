@@ -76,15 +76,15 @@ const RESULTS: Result[] = [
 ];
 
 const ACCENT: Record<Pillar["accent"], string> = {
-  lime:    "bg-bm-lime/15 text-bm-ink ring-1 ring-bm-lime/40 dark:text-bm-lime",
+  lime: "bg-bm-lime/15 text-bm-ink ring-1 ring-bm-lime/40",
   magenta: "bg-bm-magenta/12 text-bm-magenta ring-1 ring-bm-magenta/30",
-  ok:      "bg-bm-ok/15 text-bm-ok ring-1 ring-bm-ok/30",
-  slate:   "bg-bm-slate/15 text-bm-slate ring-1 ring-bm-slate/25",
+  ok: "bg-bm-ok/15 text-bm-ok ring-1 ring-bm-ok/30",
+  slate: "bg-bm-slate/15 text-bm-slate ring-1 ring-bm-slate/25",
 };
 
 export function LandingSections() {
   return (
-    <section className="bg-bm-mist text-blueprint-navy dark:bg-bm-ink dark:text-blueprint-mist">
+    <section className="bg-bm-mist text-blueprint-navy">
       <div className="mx-auto w-full max-w-6xl px-6 py-16 md:px-10 md:py-20">
         {/* ───── Pillars ───── */}
         <div className="flex flex-col gap-3">
@@ -110,7 +110,7 @@ export function LandingSections() {
                 <h3 className="font-sans text-lg font-bold tracking-tight">
                   {p.title}
                 </h3>
-                <p className="text-sm leading-relaxed text-bm-slate dark:text-blueprint-mist/65">
+                <p className="text-sm leading-relaxed text-bm-slate">
                   {p.body}
                 </p>
               </article>
@@ -131,16 +131,16 @@ export function LandingSections() {
             const Icon = r.icon;
             return (
               <article key={r.label} className="gm-card flex flex-col gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-chip bg-bm-lime/15 text-bm-ink ring-1 ring-bm-lime/40 dark:text-bm-lime">
+                <span className="flex h-9 w-9 items-center justify-center rounded-chip bg-bm-lime/15 text-bm-ink ring-1 ring-bm-lime/40">
                   <Icon className="h-4 w-4" aria-hidden />
                 </span>
                 <p className="font-sans text-3xl font-bold tabular-nums tracking-tight">
                   {r.value}
                 </p>
-                <p className="text-sm font-medium text-blueprint-navy dark:text-blueprint-mist">
+                <p className="text-sm font-medium text-blueprint-navy">
                   {r.label}
                 </p>
-                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-bm-slate dark:text-blueprint-mist/45">
+                <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-bm-slate">
                   {r.citation}
                 </p>
               </article>
@@ -158,18 +158,16 @@ export function LandingSections() {
               Recommendations only. The grid stays in the operator&rsquo;s
               hands.
             </h3>
-            <p className="mt-3 text-sm leading-relaxed text-bm-slate dark:text-blueprint-mist/65">
+            <p className="mt-3 text-sm leading-relaxed text-bm-slate">
               GRIDMIND today is advisory. PPO outputs flow through a hard cap
               that ensures{" "}
-              <span className="font-mono text-blueprint-navy dark:text-blueprint-mist">
+              <span className="font-mono text-blueprint-navy">
                 P_final = min(P_AI, P_max_feeder)
               </span>
               . When feeder headroom drops below the safety floor, a
               proportional-fairness fallback takes over and every override is
-              written to InfluxDB as a{" "}
-              <span className="font-mono text-blueprint-navy dark:text-blueprint-mist">
-                safety_events
-              </span>{" "}
+              written to InfluxDB as a
+              <span className="font-mono text-blueprint-navy"> safety_events </span>
               row. No commands are dispatched to BESCOM infrastructure
               automatically.
             </p>
@@ -182,23 +180,24 @@ export function LandingSections() {
               <Building2 className="h-4 w-4" />
             </span>
             <p className="font-sans text-lg font-bold">For BESCOM grid teams</p>
-            <p className="text-sm text-bm-slate dark:text-blueprint-mist/65">
+            <p className="text-sm text-bm-slate">
               Built around the BESCOM ToU tariff, distribution-feeder
               constraints, and 10 representative Bengaluru zones (residential,
-              commercial, highway, mixed).
+              commercial, highway, mixed) — all reproduced via a curated mock
+              dataset so the UI runs anywhere.
             </p>
           </div>
         </div>
 
         {/* ───── CTA strip ───── */}
-        <div className="mt-16 flex flex-col items-start justify-between gap-4 rounded-card border border-bm-lime/40 bg-bm-lime/15 p-6 dark:bg-bm-lime/10 md:flex-row md:items-center">
+        <div className="mt-16 flex flex-col items-start justify-between gap-4 rounded-card border border-bm-lime/40 bg-bm-lime/15 p-6 md:flex-row md:items-center">
           <div>
-            <p className="font-sans text-xl font-bold tracking-tight text-blueprint-navy dark:text-blueprint-mist">
-              Ready to see it run?
+            <p className="font-sans text-xl font-bold tracking-tight text-blueprint-navy">
+              Ready to see it run — sans backend?
             </p>
-            <p className="mt-1 text-sm text-bm-slate dark:text-blueprint-mist/70">
-              The operator dashboard pulls live state from the gateway. Falls
-              back to safe defaults when the backend is offline.
+            <p className="mt-1 text-sm text-bm-slate">
+              The operator dashboard loads Bengaluru mock telemetry by default.
+              Flip a single env var whenever you wire it to the real gateway.
             </p>
           </div>
           <Link
@@ -211,11 +210,11 @@ export function LandingSections() {
         </div>
 
         {/* ───── Footer note ───── */}
-        <footer className="mt-12 border-t border-bm-line/40 pt-6 dark:border-white/10">
-          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-bm-slate dark:text-blueprint-mist/45">
-            GRIDMIND · Research prototype · BESCOM EV Infrastructure Challenge
+        <footer className="mt-12 border-t border-bm-line/40 pt-6">
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-bm-slate">
+            GRIDMIND · Research prototype · Bengaluru mock dataset
           </p>
-          <p className="mt-2 font-sans text-sm text-bm-slate dark:text-blueprint-mist/55">
+          <p className="mt-2 font-sans text-sm text-bm-slate">
             Based on peer-reviewed work — Scientific Reports (Nature) · IEEE
             OCPP studies. Recommendations are advisory; no automated commands
             flow to BESCOM infrastructure today.

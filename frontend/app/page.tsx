@@ -12,10 +12,7 @@ export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="relative flex flex-col hero-grid-bg">
-        <div
-          className="pointer-events-none absolute inset-0 bg-bm-mist/55 dark:bg-bm-ink/55"
-          aria-hidden
-        />
+        <div className="pointer-events-none absolute inset-0 bg-bm-mist/55" aria-hidden />
         <LandingHero />
       </div>
       <LandingSections />

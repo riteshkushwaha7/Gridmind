@@ -21,7 +21,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-white/5 bg-bm-ink/95 backdrop-blur-md md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 flex border-t border-bm-line/40 bg-white/95 backdrop-blur-md md:hidden"
       aria-label="Primary"
     >
       {items.map(({ href, label, icon: Icon }) => {
@@ -33,7 +33,7 @@ export function BottomNav() {
             href={href}
             className={cn(
               "flex min-h-[52px] flex-1 flex-col items-center justify-center gap-0.5 px-1 py-1.5 transition-colors",
-              active ? "text-bm-lime" : "text-white/55 hover:text-white",
+              active ? "text-bm-ink" : "text-bm-slate hover:text-blueprint-navy",
             )}
           >
             <Icon className="h-5 w-5 shrink-0" strokeWidth={active ? 2.2 : 1.8} />

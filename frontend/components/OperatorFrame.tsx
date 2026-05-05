@@ -5,7 +5,7 @@ import { TopBar } from "@/components/TopBar";
 
 export function OperatorFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-bm-mist text-blueprint-navy dark:bg-bm-ink dark:text-blueprint-mist">
+    <div className="flex min-h-screen bg-bm-mist text-blueprint-navy">
       <Sidebar />
       <div className="flex min-h-0 flex-1 flex-col md:pl-16">
         <TopBar />

@@ -26,8 +26,21 @@ import type {
 
 const BASE_URL =
   (typeof process !== "undefined" && process.env.NEXT_PUBLIC_API_URL) || "";
+const DATA_MODE =
+  (typeof process !== "undefined" && process.env.NEXT_PUBLIC_DATA_MODE) ||
+  "mock";
+const USE_MOCK = DATA_MODE !== "live";
 
-const DEFAULT_TIMEOUT_MS = 8_000;
+// NOTE: This build intentionally avoids hitting the backend gateway. When the
+// stack is ready for live data, set NEXT_PUBLIC_DATA_MODE=live and re-enable the
+// commented fetch blocks below.
+
+function clone<T>(value: T): T {
+  if (typeof globalThis.structuredClone === "function") {
+    return globalThis.structuredClone(value);
+  }
+  return JSON.parse(JSON.stringify(value));
+}
 
 function logError(label: string, err: unknown): void {
   // eslint-disable-next-line no-console
@@ -40,19 +53,23 @@ async function request<T>(
   fallback: T,
   label: string,
 ): Promise<T> {
-  if (!BASE_URL) {
-    logError(label, "NEXT_PUBLIC_API_URL not set; using fallback");
-    return fallback;
+  if (USE_MOCK || !BASE_URL) {
+    if (!BASE_URL) {
+      logError(label, "NEXT_PUBLIC_API_URL not set; using fallback");
+    }
+    return clone(fallback);
   }
-  const ctrl =
-    typeof AbortController !== "undefined" ? new AbortController() : null;
+  logError(label, "Live gateway disabled; serving mock payload");
+  /*
+  // When the backend is available, restore the fetch logic below.
+  const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
   const timer =
     ctrl &&
     setTimeout(() => {
       try {
         ctrl.abort();
       } catch {
-        /* ignore */
+        // ignore
       }
     }, DEFAULT_TIMEOUT_MS);
   try {
@@ -67,15 +84,17 @@ async function request<T>(
     });
     if (!res.ok) {
       logError(label, `HTTP ${res.status} ${res.statusText}`);
-      return fallback;
+      return clone(fallback);
     }
     return (await res.json()) as T;
   } catch (err) {
     logError(label, err);
-    return fallback;
+    return clone(fallback);
   } finally {
     if (timer) clearTimeout(timer);
   }
+  */
+  return clone(fallback);
 }
 
 // ─────────────── Dashboard ───────────────
@@ -151,10 +170,17 @@ export async function overrideZoneSchedule(
   zoneId: string,
   powerKw: number,
 ): Promise<{ success: boolean }> {
-  if (!BASE_URL) {
-    logError("POST /schedule/override", "NEXT_PUBLIC_API_URL not set; faking success");
+  if (USE_MOCK || !BASE_URL) {
+    logError(
+      "POST /schedule/override",
+      USE_MOCK
+        ? "mock mode enabled; acknowledging override without backend"
+        : "NEXT_PUBLIC_API_URL not set; faking success",
+    );
     return { success: true };
   }
+  logError("POST /schedule/override", "Live overrides disabled; returning success");
+  /*
   try {
     const res = await fetch(`${BASE_URL}/schedule/override`, {
       method: "POST",
@@ -171,6 +197,8 @@ export async function overrideZoneSchedule(
     logError("POST /schedule/override", err);
     return { success: false };
   }
+  */
+  return { success: true };
 }
 
 // ─────────────── Planning ───────────────
@@ -184,10 +212,17 @@ export function getZoneRanking(): Promise<ZoneRankingResponse> {
 }
 
 export async function triggerReplan(): Promise<{ job_id: string }> {
-  if (!BASE_URL) {
-    logError("POST /clustering/replan", "NEXT_PUBLIC_API_URL not set; faking job");
-    return { job_id: "fallback-job" };
+  if (USE_MOCK || !BASE_URL) {
+    logError(
+      "POST /clustering/replan",
+      USE_MOCK
+        ? "mock mode enabled; returning simulated job id"
+        : "NEXT_PUBLIC_API_URL not set; faking job",
+    );
+    return { job_id: "mock-job-blr" };
   }
+  logError("POST /clustering/replan", "Live replan disabled; returning mock job id");
+  /*
   try {
     const res = await fetch(`${BASE_URL}/clustering/replan`, {
       method: "POST",
@@ -202,6 +237,8 @@ export async function triggerReplan(): Promise<{ job_id: string }> {
     logError("POST /clustering/replan", err);
     return { job_id: "fallback-job" };
   }
+  */
+  return { job_id: "mock-job-blr" };
 }
 
 // ─────────────── Health ───────────────

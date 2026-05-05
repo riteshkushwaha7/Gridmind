@@ -47,8 +47,8 @@ function NavLink({
       className={cn(
         "group/nav relative flex h-11 items-center gap-3 overflow-hidden rounded-card px-3 font-sans text-sm transition-colors",
         active
-          ? "bg-bm-lime/15 text-bm-lime"
-          : "text-white/70 hover:bg-white/5 hover:text-white",
+          ? "bg-bm-lime/20 text-bm-ink"
+          : "text-bm-slate hover:bg-bm-mist hover:text-blueprint-navy",
       )}
     >
       {active ? (
@@ -71,7 +71,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "group/sidebar fixed left-0 top-0 z-40 hidden h-screen w-16 flex-col border-r border-white/5 bg-bm-ink md:flex",
+        "group/sidebar fixed left-0 top-0 z-40 hidden h-screen w-16 flex-col border-r border-bm-line/30 bg-white text-blueprint-navy md:flex",
         "transition-[width] duration-200 ease-out hover:w-[228px]",
       )}
       aria-label="Primary"
@@ -79,19 +79,19 @@ export function Sidebar() {
       {/* Logo */}
       <Link
         href="/"
-        className="flex h-16 shrink-0 items-center gap-3 px-4 text-bm-lime"
+        className="flex h-16 shrink-0 items-center gap-3 px-4 text-bm-ink"
       >
         <span
-          className="flex h-9 w-9 items-center justify-center rounded-card bg-bm-lime/15 ring-1 ring-bm-lime/40"
+          className="flex h-9 w-9 items-center justify-center rounded-card bg-bm-lime/20 ring-1 ring-bm-lime/40"
           aria-hidden
         >
           <Zap className="h-5 w-5" strokeWidth={2.4} />
         </span>
         <div className="hidden flex-col leading-tight group-hover/sidebar:flex">
-          <span className="font-sans text-sm font-bold tracking-wide text-white">
+          <span className="font-sans text-sm font-bold tracking-wide text-blueprint-navy">
             GRIDMIND
           </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/50">
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-bm-slate">
             BESCOM · operator
           </span>
         </div>
@@ -109,7 +109,7 @@ export function Sidebar() {
 
       <div className="flex flex-col gap-1 px-2 pb-4">
         <span
-          className="mx-3 mb-2 hidden font-mono text-[10px] uppercase tracking-[0.18em] text-white/35 group-hover/sidebar:block"
+          className="mx-3 mb-2 hidden font-mono text-[10px] uppercase tracking-[0.18em] text-bm-slate/70 group-hover/sidebar:block"
           aria-hidden
         >
           More
