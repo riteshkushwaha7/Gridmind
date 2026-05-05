@@ -83,7 +83,7 @@
   .gm-chip-danger  { @apply bg-bm-danger/15 text-bm-danger ring-1 ring-bm-danger/30; }
   .gm-chip-lime    { @apply bg-bm-lime/15 text-bm-ink ring-1 ring-bm-lime/40
                             dark:text-bm-lime; }
-  .gm-chip-magenta { @apply bg-bm-magenta/12 text-bm-magenta ring-1 ring-bm-magenta/30; }
+  .gm-chip-magenta { @apply bg-bm-magenta/10 text-bm-magenta ring-1 ring-bm-magenta/30; }
   .gm-chip-slate   { @apply bg-bm-slate/15 text-bm-slate ring-1 ring-bm-slate/25; }
 
   /* Lime focus ring. */
