@@ -20,19 +20,19 @@ export function LandingHero() {
           >
             <Zap className="h-3.5 w-3.5" strokeWidth={2.4} />
           </span>
-          Research prototype · Bengaluru city
+          Research prototype · Karnataka grid
         </span>
 
         <h1 className="font-sans text-4xl font-bold leading-[1.05] tracking-tight text-blueprint-navy sm:text-5xl md:text-6xl">
-          AI-driven EV charging for Bengaluru,
+          AI-driven EV charging for Karnataka,
           <br />
           <span className="text-bm-ink underline decoration-bm-lime decoration-[6px] underline-offset-[8px]">
-            running on a curated mock dataset.
+            running on a curated statewide mock dataset.
           </span>
         </h1>
 
         <p className="max-w-2xl font-sans text-lg leading-relaxed text-bm-slate">
-          GRIDMIND ships with a hand-crafted Bengaluru simulation: feeder load,
+          GRIDMIND ships with a hand-crafted Karnataka simulation: feeder load,
           tariff changes, and station rankings are all mocked so you can explore
           the full dashboard without training any ML model. Recommendations are
           still advisory — operators stay in control.

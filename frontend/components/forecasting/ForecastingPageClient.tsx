@@ -244,7 +244,7 @@ export function ForecastingPageClient() {
             <a
               href={
                 activeZone
-                  ? `/dashboard/zone/${activeZone}`
+                  ? `/dashboard/zone/${encodeURIComponent(activeZone)}`
                   : "/dashboard"
               }
               className="gm-btn-ghost text-xs"
@@ -253,16 +253,16 @@ export function ForecastingPageClient() {
             </a>
           }
         />
-        <div className="mt-5 min-h-[320px] flex-1">
+        <div className="mt-5 flex-1">
           {isLoading || !activeZone ? (
-            <Skeleton className="h-full w-full" />
+            <Skeleton className="h-[340px] w-full" />
           ) : chartData.length === 0 ? (
             <EmptyState
               title="No forecast points"
               hint="Train the LSTM model: docker compose exec backend-lstm python -m lstm.train"
             />
           ) : (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={340}>
               <AreaChart
                 data={chartData}
                 margin={{ top: 8, right: 8, left: 0, bottom: 0 }}

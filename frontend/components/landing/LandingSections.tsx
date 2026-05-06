@@ -182,7 +182,7 @@ export function LandingSections() {
             <p className="font-sans text-lg font-bold">For BESCOM grid teams</p>
             <p className="text-sm text-bm-slate">
               Built around the BESCOM ToU tariff, distribution-feeder
-              constraints, and 10 representative Bengaluru zones (residential,
+              constraints, and 10 representative Karnataka zones (residential,
               commercial, highway, mixed) — all reproduced via a curated mock
               dataset so the UI runs anywhere.
             </p>
@@ -196,7 +196,7 @@ export function LandingSections() {
               Ready to see it run — sans backend?
             </p>
             <p className="mt-1 text-sm text-bm-slate">
-              The operator dashboard loads Bengaluru mock telemetry by default.
+              The operator dashboard loads Karnataka mock telemetry by default.
               Flip a single env var whenever you wire it to the real gateway.
             </p>
           </div>
@@ -212,7 +212,7 @@ export function LandingSections() {
         {/* ───── Footer note ───── */}
         <footer className="mt-12 border-t border-bm-line/40 pt-6">
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-bm-slate">
-            GRIDMIND · Research prototype · Bengaluru mock dataset
+            GRIDMIND · Research prototype · Karnataka mock dataset
           </p>
           <p className="mt-2 font-sans text-sm text-bm-slate">
             Based on peer-reviewed work — Scientific Reports (Nature) · IEEE
